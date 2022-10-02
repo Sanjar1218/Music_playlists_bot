@@ -6,3 +6,5 @@
 - get even more other users liked music too
 - get others created most popular playlists
 - its free to use
+
+<img src='music.png'>
