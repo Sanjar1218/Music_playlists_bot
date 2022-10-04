@@ -1,9 +1,20 @@
-import telegram
+from cgitb import text
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
+from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext
+import os
+from database import User
 
-def start(update, context):
+TOKEN = os.environ['TOKEN']
+
+
+def start(update: Update, context: CallbackContext):
     """Starts with two buttons uz and ru
     """
-    pass
+    userid = update.message.from_user.id
+    user = User(username=str(userid))
+    keyboard = [[KeyboardButton(text='uz'), KeyboardButton(text='ru')]]
+    update.message.reply_text(text='Welcome message.', reply_markup=ReplyKeyboardMarkup(keyboard=keyboard))
+    
 
 def uz(update, context):
     """Have to create these buttons
@@ -41,4 +52,11 @@ def get_music(update, context):
     pass
 
 
-# All handlers here !!!
+updater = Updater(token=TOKEN)
+dispatcher = updater.dispatcher
+
+dispatcher.add_handler(handler=CommandHandler(command=['start', 'boshlash'], callback=start))
+
+
+updater.start_polling()
+updater.idle()
