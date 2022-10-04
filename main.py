@@ -1,6 +1,6 @@
 from cgitb import text
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
-from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext, Filters
 import os
 from database import User
 
@@ -13,14 +13,22 @@ def start(update: Update, context: CallbackContext):
     userid = update.message.from_user.id
     user = User(username=str(userid))
     keyboard = [[KeyboardButton(text='uz'), KeyboardButton(text='ru')]]
-    update.message.reply_text(text='Welcome message.', reply_markup=ReplyKeyboardMarkup(keyboard=keyboard))
+    update.message.reply_text(text='Welcome message.', reply_markup=ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True))
     
 
-def uz(update, context):
+def uz(update: Update, context: CallbackContext):
     """Have to create these buttons
     playlist yaratish, Barcha musiqalar, Playlistlar
     """
-    pass
+    keyboard = [
+            [
+                KeyboardButton(text='Playlist Yaratish'), 
+                KeyboardButton(text='Barcha Musiqalar'), 
+                KeyboardButton(text='PLaylistlar')
+            ],
+            [KeyboardButton(text='Orqaga')]
+        ]
+    update.message.reply_text(text='uz', reply_markup=ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True))
 
 def creating_playlist(update, context):
     """This creates a table in the database 
@@ -56,6 +64,8 @@ updater = Updater(token=TOKEN)
 dispatcher = updater.dispatcher
 
 dispatcher.add_handler(handler=CommandHandler(command=['start', 'boshlash'], callback=start))
+dispatcher.add_handler(handler=MessageHandler(filters=Filters.text('uz'), callback=uz))
+dispatcher.add_handler(handler=MessageHandler(filters=Filters.text('Orqaga'), callback=start))
 
 
 updater.start_polling()
