@@ -22,9 +22,9 @@ def uz(update: Update, context: CallbackContext):
     """
     keyboard = [
             [
-                KeyboardButton(text='Playlist Yaratish'), 
+                KeyboardButton(text='PLaylistlar'),
                 KeyboardButton(text='Barcha Musiqalar'), 
-                KeyboardButton(text='PLaylistlar')
+                KeyboardButton(text='Playlist Yaratish'), 
             ],
             [KeyboardButton(text='Orqaga')]
         ]
