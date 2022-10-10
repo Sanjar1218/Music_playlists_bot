@@ -1,5 +1,4 @@
-from cgitb import text
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackContext, Filters
 import os
 from database import User
@@ -22,9 +21,9 @@ def uz(update: Update, context: CallbackContext):
     """
     keyboard = [
             [
-                KeyboardButton(text='Playlist Yaratish'), 
+                KeyboardButton(text='PLaylistlar'),
                 KeyboardButton(text='Barcha Musiqalar'), 
-                KeyboardButton(text='PLaylistlar')
+                KeyboardButton(text='Playlist Yaratish'), 
             ],
             [KeyboardButton(text='Orqaga')]
         ]
@@ -41,10 +40,20 @@ def all_music(update, context):
     """
     pass
 
-def playlists(update, context):
+def playlists(update: Update, context: CallbackContext):
     """This craetes buttons with all playlist name
     """
-    pass
+    msg = update.message
+    user_id = msg.from_user.id
+    user = User(username=str(user_id))
+    pls = user.all_pl()
+    if not pls:
+        return msg.reply_text(text="Playlist mavjud emas!")
+    inline_keyboard = []
+    for pl in pls:
+        inline_btn = InlineKeyboardButton(text=pl, callback_data=pl)
+        inline_keyboard.append([inline_btn])
+    return msg.reply_text(text="PLaylistlar", reply_markup=InlineKeyboardMarkup(inline_keyboard=inline_keyboard))
 
 def music(update, context):
     """A music message with two inline buttons
@@ -66,6 +75,7 @@ dispatcher = updater.dispatcher
 dispatcher.add_handler(handler=CommandHandler(command=['start', 'boshlash'], callback=start))
 dispatcher.add_handler(handler=MessageHandler(filters=Filters.text('uz'), callback=uz))
 dispatcher.add_handler(handler=MessageHandler(filters=Filters.text('Orqaga'), callback=start))
+dispatcher.add_handler(handler=MessageHandler(filters=Filters.text('PLaylistlar'), callback=playlists))
 
 
 updater.start_polling()
